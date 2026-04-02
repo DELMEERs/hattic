@@ -1,0 +1,38 @@
+# Binaries & Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Go
+go.sum
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Streamlit & UI
+.streamlit/
+static/
+
+# Data & Databases
+data/*.db
+data/*.db-journal
+data/*.db-wal
+*.log
+
+#  OS Specific
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
