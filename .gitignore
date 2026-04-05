@@ -1,4 +1,5 @@
 # Binaries & Executables
+sniffer-core
 *.exe
 *.exe~
 *.dll
@@ -28,6 +29,7 @@ static/
 data/*.db
 data/*.db-journal
 data/*.db-wal
+data/*.db-shm
 *.log
 
 #  OS Specific

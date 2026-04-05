@@ -17,7 +17,10 @@ type FlowKey struct {
 	DstIP    string
 	SrcMAC   string
 	DstMAC   string
+	SrcPort  int
+	DstPort  int
 	Protocol string
+	TTL      int
 }
 
 type Sniffer struct {
@@ -66,6 +69,7 @@ func (s *Sniffer) Start() error {
 
 func (s *Sniffer) processPacket(packet gopacket.Packet, flows map[FlowKey]*db.TrafficLog) {
 	var srcIP, dstIP, srcMAC, dstMAC, protocol string
+	var srcPort, dstPort, ttl int
 	var payloadSize int
 
 	// Ethernet Layer
@@ -83,7 +87,29 @@ func (s *Sniffer) processPacket(packet gopacket.Packet, flows map[FlowKey]*db.Tr
 		srcIP = ip.SrcIP.String()
 		dstIP = ip.DstIP.String()
 		protocol = ip.Protocol.String()
+		ttl = int(ip.TTL)
 		payloadSize = len(ip.Payload)
+	}
+
+	// TCP Layer
+	tcpLayer := packet.Layer(layers.LayerTypeTCP)
+	if tcpLayer != nil {
+		tcp := tcpLayer.(*layers.TCP)
+		srcPort = int(tcp.SrcPort)
+		dstPort = int(tcp.DstPort)
+		protocol = "TCP"
+	}
+
+	// UDP Layer
+	udpLayer := packet.Layer(layers.LayerTypeUDP)
+	if udpLayer != nil {
+		udp := udpLayer.(*layers.UDP)
+		srcPort = int(udp.SrcPort)
+		dstPort = int(udp.DstPort)
+		protocol = "UDP"
+		if udp.DstPort == 5353 || udp.SrcPort == 5353 {
+			protocol = "mDNS"
+		}
 	}
 
 	// ARP Layer
@@ -98,15 +124,6 @@ func (s *Sniffer) processPacket(packet gopacket.Packet, flows map[FlowKey]*db.Tr
 		payloadSize = len(arp.Payload)
 	}
 
-	// UDP Layer (mDNS)
-	udpLayer := packet.Layer(layers.LayerTypeUDP)
-	if udpLayer != nil {
-		udp := udpLayer.(*layers.UDP)
-		if udp.DstPort == 5353 || udp.SrcPort == 5353 {
-			protocol = "mDNS"
-		}
-	}
-
 	if srcIP == "" && protocol == "" {
 		return
 	}
@@ -116,7 +133,10 @@ func (s *Sniffer) processPacket(packet gopacket.Packet, flows map[FlowKey]*db.Tr
 		DstIP:    dstIP,
 		SrcMAC:   srcMAC,
 		DstMAC:   dstMAC,
+		SrcPort:  srcPort,
+		DstPort:  dstPort,
 		Protocol: protocol,
+		TTL:      ttl,
 	}
 
 	if log, ok := flows[key]; ok {
@@ -130,7 +150,10 @@ func (s *Sniffer) processPacket(packet gopacket.Packet, flows map[FlowKey]*db.Tr
 			DstIP:       dstIP,
 			SrcMAC:      srcMAC,
 			DstMAC:      dstMAC,
+			SrcPort:     srcPort,
+			DstPort:     dstPort,
 			Protocol:    protocol,
+			TTL:         ttl,
 			PayloadSize: payloadSize,
 			PacketCount: 1,
 		}

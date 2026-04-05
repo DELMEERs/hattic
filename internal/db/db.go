@@ -14,13 +14,18 @@ type TrafficLog struct {
 	DstIP       string
 	SrcMAC      string
 	DstMAC      string
+	SrcPort     int
+	DstPort     int
 	Protocol    string
+	TTL         int
 	PayloadSize int
 	PacketCount int
 }
 
 func InitDB(dbPath string) (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	// Enable WAL mode for better concurrency
+	dsn := dbPath + "?_journal_mode=WAL"
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -31,4 +36,11 @@ func InitDB(dbPath string) (*gorm.DB, error) {
 	}
 
 	return db, nil
+}
+
+func BatchCreate(db *gorm.DB, logs []TrafficLog) error {
+	if len(logs) == 0 {
+		return nil
+	}
+	return db.Create(&logs).Error
 }

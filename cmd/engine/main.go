@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"hattic/internal/db"
 	"hattic/internal/sniffer"
@@ -25,11 +26,34 @@ func main() {
 	// Create Channel for Log Entries
 	logChan := make(chan db.TrafficLog, 100)
 
-	// Start Database Writer Goroutine
+	// Start Database Writer Goroutine (Batch Insert)
 	go func() {
-		for logEntry := range logChan {
-			if err := database.Create(&logEntry).Error; err != nil {
-				log.Printf("Error saving log to database: %v", err)
+		var buffer []db.TrafficLog
+		ticker := time.NewTicker(2 * time.Second)
+		defer ticker.Stop()
+
+		flush := func() {
+			if len(buffer) > 0 {
+				if err := db.BatchCreate(database, buffer); err != nil {
+					log.Printf("Error during batch insert: %v", err)
+				}
+				buffer = nil
+			}
+		}
+
+		for {
+			select {
+			case logEntry, ok := <-logChan:
+				if !ok {
+					flush()
+					return
+				}
+				buffer = append(buffer, logEntry)
+				if len(buffer) >= 100 {
+					flush()
+				}
+			case <-ticker.C:
+				flush()
 			}
 		}
 	}()
