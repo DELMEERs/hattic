@@ -46,6 +46,7 @@ class PortScannerDetector(BaseDetector):
                         level=Level.WARNING,
                         type="PORT_SCAN",
                         message=f"IP {ip} is scanning ports: {port_count} unique ports hit.",
+                        src_ip=ip,
                     )
                 )
 

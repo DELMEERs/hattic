@@ -2,9 +2,9 @@ import time
 
 from internal.analyzer.detectors.arp_spoof import ARPSpoofDetector
 from internal.analyzer.detectors.mdns_scanner import MDNSScanner
-from internal.analyzer.detectors.traffic_flood import TrafficFloodDetector
 from internal.analyzer.detectors.port_scanner import PortScannerDetector
 from internal.analyzer.detectors.suspicious_protocol import SuspiciousProtocolDetector
+from internal.analyzer.detectors.traffic_flood import TrafficFloodDetector
 from internal.analyzer.detectors.unusual_ttl import UnusualTTLDetector
 from internal.analyzer.manager import DetectionManager
 
@@ -12,12 +12,11 @@ from internal.analyzer.manager import DetectionManager
 def main():
     manager = DetectionManager(db_path="data/traffic.db")
 
+
     manager.register_detector(ARPSpoofDetector())
     manager.register_detector(
         TrafficFloodDetector(
-            info_threshold=100000,
-            warning_threshold=500000,
-            critical_threshold=1000000
+            info_threshold=100000, warning_threshold=500000, critical_threshold=1000000
         )
     )
     manager.register_detector(MDNSScanner())

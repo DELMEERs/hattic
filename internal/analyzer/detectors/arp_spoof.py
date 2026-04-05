@@ -40,6 +40,7 @@ class ARPSpoofDetector(BaseDetector):
                         level=Level.CRITICAL,
                         type="ARP_SPOOF",
                         message=f"Address conflict: IP {ip} seen on different devices: {', '.join(macs)}",
+                        src_ip=ip,
                     )
                 )
 

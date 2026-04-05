@@ -22,6 +22,15 @@ type TrafficLog struct {
 	PacketCount int
 }
 
+type Alert struct {
+	ID        uint      `gorm:"primaryKey"`
+	Timestamp time.Time `gorm:"index"`
+	Level     string
+	Type      string
+	Message   string
+	SrcIP     string
+}
+
 func InitDB(dbPath string) (*gorm.DB, error) {
 	// Enable WAL mode for better concurrency
 	dsn := dbPath + "?_journal_mode=WAL"
@@ -30,7 +39,7 @@ func InitDB(dbPath string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&TrafficLog{})
+	err = db.AutoMigrate(&TrafficLog{}, &Alert{})
 	if err != nil {
 		return nil, err
 	}

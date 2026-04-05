@@ -19,6 +19,7 @@ class Alert:
     level: Level
     type: str
     message: str
+    src_ip: str
 
 
 class BaseDetector(ABC):

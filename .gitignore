@@ -1,5 +1,4 @@
 # Binaries & Executables
-sniffer-core
 *.exe
 *.exe~
 *.dll

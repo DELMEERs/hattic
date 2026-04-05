@@ -60,6 +60,7 @@ class TrafficFloodDetector(BaseDetector):
                             level=level,
                             type="TRAFFIC_FLOOD",
                             message=f"[{ip_str}] {desc} ({p_count} packets)",
+                            src_ip=ip_str,
                         )
                     )
 

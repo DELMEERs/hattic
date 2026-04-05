@@ -63,6 +63,7 @@ class SuspiciousProtocolDetector(BaseDetector):
                             level=Level.WARNING,
                             type="SUSPICIOUS_PROTOCOL",
                             message=f"[{ip}] {reason}",
+                            src_ip=ip,
                         )
                     )
 

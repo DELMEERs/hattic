@@ -50,6 +50,7 @@ class UnusualTTLDetector(BaseDetector):
                                 level=Level.INFO,
                                 type="UNUSUAL_TTL",
                                 message=f"External IP {ip} with unusual TTL: {ttl}",
+                                src_ip=ip,
                             )
                         )
 

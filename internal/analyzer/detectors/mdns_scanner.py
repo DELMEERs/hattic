@@ -39,6 +39,7 @@ class MDNSScanner(BaseDetector):
                         level=Level.INFO,
                         type="NEW_DEVICE_MDNS",
                         message=f"New device discovered via mDNS: {ip_str} ({hostname})",
+                        src_ip=ip_str,
                     )
                 )
 
