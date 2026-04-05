@@ -37,3 +37,5 @@ data/*.db-shm
 ehthumbs.db
 Icon?
 Thumbs.db
+
+tests/
