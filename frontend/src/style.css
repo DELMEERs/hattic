@@ -1,47 +1,81 @@
-:root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
+@import "tailwindcss";
 
-    color-scheme: dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #0d0e14;
+@theme {
+  --color-ios-bg: #000000;
+  --color-ios-accent: #007AFF;
+  --color-ios-success: #34C759;
+  --color-ios-danger: #FF3B30;
+  --color-ios-warning: #FF9500;
+  --color-ios-secondary: #8E8E93;
+  
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  @keyframes blob-pulse {
+    0%, 100% { transform: scale(1) translate(0, 0); }
+    33% { transform: scale(1.1) translate(10%, -5%); }
+    66% { transform: scale(0.9) translate(-5%, 10%); }
+  }
+  --animate-blob-pulse: blob-pulse 10s ease-in-out infinite;
 }
 
-body {
-    margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
-    overflow: hidden;
-}
-
-#app {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-    width: 100%;
-}
-
-.title {
-    font-size: 5em;
-    line-height: 1.1;
-    background: #a1d7da;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
+@layer base {
+  html, body {
+    @apply m-0 p-0 w-full h-full overflow-hidden bg-black text-white antialiased;
+    font-feature-settings: "tnum" on, "lnum" on, "cv11" on, "ss01" on;
     letter-spacing: -0.02em;
+  }
+
+  #app {
+    @apply w-full h-full relative;
+  }
 }
 
-.status-text {
-    font-family: monospace;
-    color: #9aa1a7;
-    opacity: 0.8;
+@layer components {
+  .mesh-gradient {
+    @apply fixed inset-0 -z-10 overflow-hidden pointer-events-none;
+    background: radial-gradient(circle at 50% 50%, #000 0%, #000 100%);
+  }
+
+  .mesh-blob {
+    @apply absolute rounded-full opacity-40 blur-[100px] animate-blob-pulse;
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-[50px] saturate-[200%] border border-white/10 shadow-2xl;
+  }
+
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-[60px] saturate-[200%] border border-white/5 shadow-2xl;
+  }
+
+  .ios-card {
+    @apply rounded-[2rem] overflow-hidden transition-all duration-500 hover:scale-[1.01] hover:bg-white/10;
+  }
+
+  .ios-button {
+    @apply px-6 py-3 rounded-2xl font-bold tracking-tight transition-all duration-300 active:scale-95;
+  }
+}
+
+@keyframes blob-pulse {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  33% { transform: scale(1.1) translate(10%, -5%); }
+  66% { transform: scale(0.9) translate(-5%, 10%); }
+}
+
+.animate-blob-pulse {
+  animation: blob-pulse 10s ease-in-out infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/20;
 }

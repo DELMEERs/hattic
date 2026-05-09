@@ -18,17 +18,16 @@ type Alert struct {
 	SrcIP     string `json:"src_ip"`
 }
 
-// represents extracted information from a network packet
 type PacketInfo struct {
-	Timestamp time.Time
-	SrcIP     string
-	DstIP     string
-	SrcMAC    string
-	DstMAC    string
-	SrcPort   uint16
-	DstPort   uint16
-	Protocol  string
-	TTL       uint8
-	Hostname  string // for mDNS
-	Length    int
+	Timestamp time.Time `json:"timestamp"`
+	SrcIP     string    `json:"src_ip"`
+	DstIP     string    `json:"dst_ip"`
+	SrcMAC    string    `json:"src_mac"`
+	DstMAC    string    `json:"dst_mac"`
+	SrcPort   uint16    `json:"src_port"`
+	DstPort   uint16    `json:"dst_port"`
+	Protocol  string    `json:"protocol"`
+	TTL       uint8     `json:"ttl"`
+	Hostname  string    `json:"hostname"`
+	Length    int       `json:"length"`
 }

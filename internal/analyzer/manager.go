@@ -8,6 +8,7 @@ type Manager struct {
 	detectors []Detector
 	mu        sync.RWMutex
 	alertChan chan<- Alert
+	OnPacket  func(*PacketInfo)
 }
 
 func NewManager(alertChan chan<- Alert) *Manager {
@@ -24,6 +25,10 @@ func (m *Manager) RegisterDetector(d Detector) {
 }
 
 func (m *Manager) ProcessPacket(packet *PacketInfo) {
+	if m.OnPacket != nil {
+		m.OnPacket(packet)
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 

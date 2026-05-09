@@ -29,14 +29,39 @@ func NewSniffer(cfg *config.Manager, analyzerMgr *analyzer.Manager) *Sniffer {
 
 func (s *Sniffer) Start() error {
 	cfg := s.configManager.GetConfig()
+	iface := cfg.InterfaceName
 
-	if cfg.InterfaceName == "" {
-		return fmt.Errorf("interface name is not configured")
+	if iface == "" {
+		devices, err := pcap.FindAllDevs()
+		if err != nil {
+			return fmt.Errorf("failed to find devices for auto-detect: %w", err)
+		}
+		for _, dev := range devices {
+			isLoopback := false
+			for _, addr := range dev.Addresses {
+				if addr.IP.IsLoopback() {
+					isLoopback = true
+					break
+				}
+			}
+			if !isLoopback && len(dev.Addresses) > 0 {
+				iface = dev.Name
+				break
+			}
+		}
 	}
 
-	handle, err := pcap.OpenLive(cfg.InterfaceName, cfg.SnapLen, cfg.Promiscuous, pcap.BlockForever)
+	if iface == "" {
+		return fmt.Errorf("no suitable network interface found. Please configure one manually.")
+	}
+
+	handle, err := pcap.OpenLive(iface, cfg.SnapLen, cfg.Promiscuous, pcap.BlockForever)
 	if err != nil {
-		return fmt.Errorf("failed to open device %s: %w", cfg.InterfaceName, err)
+		log.Printf("ERROR: Failed to open interface %s: %v", iface, err)
+		if strings.Contains(err.Error(), "Permission denied") || strings.Contains(err.Error(), "socket: operation not permitted") {
+			return fmt.Errorf("PERMISSION_DENIED: root or CAP_NET_RAW required to sniff on %s", iface)
+		}
+		return fmt.Errorf("failed to open device %s: %w", iface, err)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
