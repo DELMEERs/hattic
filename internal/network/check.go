@@ -35,6 +35,16 @@ func GetSystemStatus() SystemStatus {
 		return status
 	}
 
+	if platform == "windows" {
+		devs, err := pcap.FindAllDevs()
+		if err != nil || len(devs) == 0 {
+			status.Status = "ERROR"
+			status.MissingDep = "Npcap Driver / Admin Rights"
+			status.Instructions = "Cannot access network adapters. Please ensure Npcap is installed with 'WinPcap compatibility mode' and run Hattic as Administrator."
+			return status
+		}
+	}
+
 	if platform == "linux" {
 		handle, err := pcap.OpenLive("lo", 1024, false, 10*time.Millisecond)
 		if err != nil {
