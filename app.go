@@ -176,6 +176,10 @@ func (a *App) GetIsSniffing() bool {
 	return a.isSniffing
 }
 
+func (a *App) GetSystemStatus() network.SystemStatus {
+	return network.GetSystemStatus()
+}
+
 func (a *App) TriggerTestAlert() {
 	alert := analyzer.Alert{
 		Timestamp: time.Now().Format(time.RFC3339),

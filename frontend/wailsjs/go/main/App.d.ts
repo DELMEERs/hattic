@@ -12,6 +12,8 @@ export function GetIsSniffing():Promise<boolean>;
 
 export function GetStats():Promise<main.Stats>;
 
+export function GetSystemStatus():Promise<network.SystemStatus>;
+
 export function HealthCheck():Promise<main.HealthStatus>;
 
 export function SaveConfig(arg1:config.AppConfig):Promise<void>;

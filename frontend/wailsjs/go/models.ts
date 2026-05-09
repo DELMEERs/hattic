@@ -76,6 +76,24 @@ export namespace network {
 	        this.ip_addresses = source["ip_addresses"];
 	    }
 	}
+	export class SystemStatus {
+	    status: string;
+	    platform: string;
+	    missingDep: string;
+	    instructions: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SystemStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.status = source["status"];
+	        this.platform = source["platform"];
+	        this.missingDep = source["missingDep"];
+	        this.instructions = source["instructions"];
+	    }
+	}
 
 }
 

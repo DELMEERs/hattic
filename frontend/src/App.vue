@@ -7,7 +7,8 @@ import TrafficItem from './components/TrafficItem.vue';
 import AlertItem from './components/AlertItem.vue';
 import ConfigPanel from './components/ConfigPanel.vue';
 import { EventsOn, EventsOff } from '../wailsjs/runtime';
-import { GetStats, GetIsSniffing, HealthCheck } from '../wailsjs/go/main/App';
+import { GetStats, GetIsSniffing, HealthCheck, GetSystemStatus } from '../wailsjs/go/main/App';
+import DependencyModal from './components/DependencyModal.vue';
 import { Trash2, Activity, Bell, ChevronDown, Zap, ShieldCheck, ShieldAlert } from 'lucide-vue-next';
 
 const activeTab = ref('dashboard');
@@ -17,6 +18,7 @@ const alerts = ref<any[]>([]);
 const isSniffing = ref(false);
 const showLogPopover = ref(false);
 const health = ref({ is_root: false, pcap_version: '', can_sniff: false, error: '' });
+const systemStatus = ref<any>(null);
 const lastError = ref('');
 
 const updateStats = async () => {
@@ -29,7 +31,16 @@ const updateStats = async () => {
   }
 };
 
+const checkSystem = async () => {
+  try {
+    systemStatus.value = await GetSystemStatus();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 onMounted(() => {
+  checkSystem();
   updateStats();
   const statsInterval = setInterval(updateStats, 2000);
 
@@ -75,6 +86,8 @@ const clearAlerts = () => {
 </script>
 
 <template>
+  <DependencyModal :status="systemStatus" />
+  
   <!-- Animated Mesh Background -->
   <div class="mesh-gradient">
     <div class="mesh-blob w-[600px] h-[600px] bg-purple-600 top-[-10%] left-[-10%]"></div>
@@ -82,7 +95,8 @@ const clearAlerts = () => {
     <div class="mesh-blob w-[400px] h-[400px] bg-ios-accent top-[20%] right-[10%] delay-1000"></div>
   </div>
 
-  <div class="flex h-screen w-full text-white overflow-hidden relative z-10 font-sans">
+  <div :class="['flex h-screen w-full text-white overflow-hidden relative z-10 font-sans transition-all duration-700', 
+                 systemStatus?.status === 'ERROR' ? 'blur-3xl scale-95 pointer-events-none' : '']">
     <Sidebar v-model:activeTab="activeTab" />
     
     <main class="flex-1 flex flex-col min-w-0 h-full">

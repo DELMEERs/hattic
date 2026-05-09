@@ -18,6 +18,10 @@ export function GetStats() {
   return window['go']['main']['App']['GetStats']();
 }
 
+export function GetSystemStatus() {
+  return window['go']['main']['App']['GetSystemStatus']();
+}
+
 export function HealthCheck() {
   return window['go']['main']['App']['HealthCheck']();
 }
