@@ -41,7 +41,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          # Исправили имя пакета под Ubuntu 24.04
           sudo apt-get install -y libpcap-dev libgtk-3-dev libwebkit2gtk-4.1-dev
 
       - name: Install Dependencies (Windows)
@@ -60,8 +59,12 @@ jobs:
 
       - name: Build Wails App
         run: |
-          # Добавили флаг -no-package для скорости дебага, если нужно
-          wails build -platform ${{ matrix.platform }} -o ${{ matrix.artifact_name }}
+          if ("${{ matrix.os }}" -eq "ubuntu-latest") {
+            wails build -platform ${{ matrix.platform }} -o ${{ matrix.artifact_name }} -tags webkit2gtk_41
+          } else {
+            wails build -platform ${{ matrix.platform }} -o ${{ matrix.artifact_name }}
+          }
+        shell: pwsh
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -85,5 +88,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: all-artifacts/*
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
