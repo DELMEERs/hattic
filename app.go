@@ -89,7 +89,6 @@ func (a *App) listenForAlerts() {
 	}
 }
 
-
 func (a *App) GetInterfaces() ([]network.NetworkInterface, error) {
 	return network.GetInterfaces()
 }

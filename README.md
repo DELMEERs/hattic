@@ -43,7 +43,7 @@ Hattic is distributed as a portable binary. Select your platform below for a foo
 
 ### 🪟 Windows
 1.  **Download:** Grab the latest `.exe` from the [GitHub Releases](https://github.com/DELMEERs/hattic/releases) page.
-2.  **Driver Requirement:** Hattic requires **Npcap**. 
+2.  **Driver Requirement:** Hattic requires **Npcap**.
     -   [Download Npcap here](https://npcap.com/#download).
     -   **Important:** During installation, you **must** check the box for **"Install Npcap with WinPcap compatibility mode"** for the sniffer engine to function correctly.
 3.  **Run:** Launch `hattic.exe` and grant Administrative privileges when prompted.
@@ -99,6 +99,6 @@ Hattic is an Open Source project. We welcome contributions that align with our v
 
 <div align="center">
   <p><b>Language / Язык</b></p>
-  <a href="#hattic">English Version</a> • 
+  <a href="#hattic">English Version</a> •
   <a href="#hattic-1">Русская версия</a>
 </div>

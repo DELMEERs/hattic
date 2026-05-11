@@ -99,6 +99,6 @@ Hattic — это Open Source проект. Мы приветствуем вкл
 
 <div align="center">
   <p><b>Language / Язык</b></p>
-  <a href="#hattic">English Version</a> • 
+  <a href="#hattic">English Version</a> •
   <a href="#hattic-1">Русская версия</a>
 </div>
