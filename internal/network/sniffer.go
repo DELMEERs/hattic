@@ -31,6 +31,8 @@ func (s *Sniffer) Start() error {
 	cfg := s.configManager.GetConfig()
 	iface := cfg.InterfaceName
 
+	// If no interface is specified, attempt to auto-detect the first non-loopback interface
+	// that has at least one IP address assigned.
 	if iface == "" {
 		devices, err := pcap.FindAllDevs()
 		if err != nil {
@@ -55,9 +57,13 @@ func (s *Sniffer) Start() error {
 		return fmt.Errorf("no suitable network interface found. Please configure one manually.")
 	}
 
+	// OpenLive opens the device for real-time packet capture.
+	// We use pcap.BlockForever to ensure the handle stays open until context is cancelled.
 	handle, err := pcap.OpenLive(iface, cfg.SnapLen, cfg.Promiscuous, pcap.BlockForever)
 	if err != nil {
 		log.Printf("ERROR: Failed to open interface %s: %v", iface, err)
+		// Check for common permission errors and provide actionable feedback.
+		// On Linux, the user likely needs CAP_NET_RAW.
 		if strings.Contains(err.Error(), "Permission denied") || strings.Contains(err.Error(), "socket: operation not permitted") {
 			return fmt.Errorf("PERMISSION_DENIED: root or CAP_NET_RAW required to sniff on %s", iface)
 		}

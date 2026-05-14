@@ -4,14 +4,28 @@
 *.dll
 *.so
 *.dylib
+hattic
 
 # Go
 go.sum
+vendor/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Data & Databases
 *.log
 
+# Project Specific
 build/bin
 node_modules
 frontend/dist
 config.json
+frontend/wailsjs/

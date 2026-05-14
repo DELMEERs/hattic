@@ -59,6 +59,35 @@ Hattic is distributed as a portable binary. Select your platform below for a foo
 
 ---
 
+## 🛠️ Development
+
+To set up Hattic for development, follow these steps:
+
+### Prerequisites
+-   **Go 1.22+**
+-   **Node.js & npm**
+-   **Wails CLI:** Install via `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
+-   **System Headers:** `libpcap` headers are required for compilation.
+    -   **Ubuntu/Debian:** `sudo apt-get install libpcap-dev`
+    -   **Windows:** Npcap SDK is bundled, but ensure Npcap is installed.
+
+### Setup
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/DELMEERs/hattic.git
+    cd hatic
+    ```
+2.  **Install frontend dependencies:**
+    ```bash
+    cd frontend && npm install && cd ..
+    ```
+3.  **Run in development mode:**
+    ```bash
+    wails dev
+    ```
+
+---
+
 ## 🛠️ Tech Stack
 
 Hattic is built using a modern, type-safe architecture.
