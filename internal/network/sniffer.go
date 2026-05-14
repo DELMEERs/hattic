@@ -71,7 +71,7 @@ func (s *Sniffer) Start() error {
 
 	go func() {
 		defer handle.Close()
-		log.Printf("Started sniffing on interface %s", cfg.InterfaceName)
+		log.Printf("Started sniffing on interface %s", iface)
 
 		for {
 			select {
@@ -96,6 +96,18 @@ func (s *Sniffer) Stop() {
 	}
 }
 
+var (
+	tcpProtocols = map[uint16]string{
+		80:  "HTTP",
+		443: "HTTPS",
+		22:  "SSH",
+	}
+	udpProtocols = map[uint16]string{
+		53:   "DNS",
+		5353: "MDNS",
+	}
+)
+
 func (s *Sniffer) processPacket(packet gopacket.Packet) {
 	info := &analyzer.PacketInfo{
 		Timestamp: packet.Metadata().Timestamp,
@@ -103,7 +115,7 @@ func (s *Sniffer) processPacket(packet gopacket.Packet) {
 	}
 
 	if ethLayer := packet.Layer(layers.LayerTypeEthernet); ethLayer != nil {
-		eth, _ := ethLayer.(*layers.Ethernet)
+		eth := ethLayer.(*layers.Ethernet)
 		info.SrcMAC = eth.SrcMAC.String()
 		info.DstMAC = eth.DstMAC.String()
 	}
@@ -113,7 +125,7 @@ func (s *Sniffer) processPacket(packet gopacket.Packet) {
 		info.DstIP = netLayer.NetworkFlow().Dst().String()
 
 		if ipv4Layer := packet.Layer(layers.LayerTypeIPv4); ipv4Layer != nil {
-			ipv4, _ := ipv4Layer.(*layers.IPv4)
+			ipv4 := ipv4Layer.(*layers.IPv4)
 			info.TTL = ipv4.TTL
 		}
 	}
@@ -125,27 +137,25 @@ func (s *Sniffer) processPacket(packet gopacket.Packet) {
 		case *layers.TCP:
 			info.SrcPort = uint16(t.SrcPort)
 			info.DstPort = uint16(t.DstPort)
-			if info.DstPort == 80 || info.SrcPort == 80 {
-				info.Protocol = "HTTP"
-			} else if info.DstPort == 443 || info.SrcPort == 443 {
-				info.Protocol = "HTTPS"
-			} else if info.DstPort == 22 || info.SrcPort == 22 {
-				info.Protocol = "SSH"
+			if proto, ok := tcpProtocols[info.DstPort]; ok {
+				info.Protocol = proto
+			} else if proto, ok := tcpProtocols[info.SrcPort]; ok {
+				info.Protocol = proto
 			}
 		case *layers.UDP:
 			info.SrcPort = uint16(t.SrcPort)
 			info.DstPort = uint16(t.DstPort)
-			if info.DstPort == 53 || info.SrcPort == 53 {
-				info.Protocol = "DNS"
-			} else if info.DstPort == 5353 || info.SrcPort == 5353 {
-				info.Protocol = "MDNS"
+			if proto, ok := udpProtocols[info.DstPort]; ok {
+				info.Protocol = proto
+			} else if proto, ok := udpProtocols[info.SrcPort]; ok {
+				info.Protocol = proto
 			}
 		}
 	}
 
 	if info.Protocol == "MDNS" {
 		if dnsLayer := packet.Layer(layers.LayerTypeDNS); dnsLayer != nil {
-			dns, _ := dnsLayer.(*layers.DNS)
+			dns := dnsLayer.(*layers.DNS)
 			for _, q := range dns.Questions {
 				info.Hostname = string(q.Name)
 				break

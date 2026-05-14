@@ -52,9 +52,7 @@ func (d *PortScannerDetector) Analyze(packet *analyzer.PacketInfo) []analyzer.Al
 	}
 
 	d.ipToPorts[packet.SrcIP][packet.DstPort] = true
-	portCount := len(d.ipToPorts[packet.SrcIP])
-
-	if portCount >= d.portThreshold {
+	if portCount := len(d.ipToPorts[packet.SrcIP]); portCount >= d.portThreshold {
 		if d.ShouldAlert("PORT_SCAN", packet.SrcIP) {
 			alerts = append(alerts, analyzer.Alert{
 				Timestamp: packet.Timestamp.Format(time.RFC3339),

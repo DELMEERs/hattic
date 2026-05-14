@@ -38,11 +38,8 @@ func (m *Manager) ProcessPacket(packet *PacketInfo) {
 			select {
 			case m.alertChan <- alert:
 			default:
-				// if the channel is full log it or discard it. for now we are using an unbuffered channel and not blocking
-				// in a real scenario I use a buffered channel or a context timeout
-				// using select with the default value we discard the alert if the receiver is not ready
-				// we can simply rely on a normal send through the channel if we prefer blocking but discarding is safer to prevent blocking the capture loop
-				// i will assume the alertChan buffer is a reasonable size
+				// Discard alert if channel is full to avoid blocking the capture loop.
+				// In a production environment, consider buffering or logging dropped alerts.
 			}
 		}
 	}

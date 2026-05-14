@@ -42,7 +42,7 @@ func (d *ARPSpoofDetector) Analyze(packet *analyzer.PacketInfo) []analyzer.Alert
 
 	if len(d.ipToMacs[packet.SrcIP]) > 1 {
 		if d.ShouldAlert("ARP_SPOOF", packet.SrcIP) {
-			macs := []string{}
+			macs := make([]string, 0, len(d.ipToMacs[packet.SrcIP]))
 			for m := range d.ipToMacs[packet.SrcIP] {
 				macs = append(macs, m)
 			}
